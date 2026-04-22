@@ -134,11 +134,9 @@
   .sp-preview p { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
   .sp-preview strong { color: var(--text); font-weight: 500; }
 
-  .outcomes-section {
-    margin-top: 14px;
-    display: none;
-  }
+  .outcomes-section { margin-top: 14px; display: none; }
   .outcomes-section.visible { display: block; }
+
   .outcomes-title {
     font-size: 11px; font-weight: 600;
     color: var(--text-hint);
@@ -149,6 +147,7 @@
     padding-top: 20px;
     border-top: 0.5px solid var(--border);
   }
+
   .outcomes-hint { font-size: 12px; color: var(--text-hint); margin-bottom: 14px; line-height: 1.5; }
 
   .gen-btn {
@@ -177,18 +176,20 @@
   .branch-left { display: flex; align-items: center; gap: 10px; }
 
   .branch-tag { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; letter-spacing: 0.03em; }
-  .tag-opener { background: #e6f1fb; color: #185FA5; }
-  .tag-yes    { background: #EAF3DE; color: #3B6D11; }
-  .tag-maybe  { background: #FAEEDA; color: #854F0B; }
-  .tag-no     { background: #FCEBEB; color: #A32D2D; }
-  .tag-close  { background: #EEEDFE; color: #3C3489; }
+  .tag-opener  { background: #e6f1fb; color: #185FA5; }
+  .tag-yes     { background: #EAF3DE; color: #3B6D11; }
+  .tag-maybe   { background: #FAEEDA; color: #854F0B; }
+  .tag-no      { background: #FCEBEB; color: #A32D2D; }
+  .tag-disco   { background: #f4f0fe; color: #5b3ec8; }
+  .tag-close   { background: #EEEDFE; color: #3C3489; }
 
   @media (prefers-color-scheme: dark) {
-    .tag-opener { background: #0C447C; color: #B5D4F4; }
-    .tag-yes    { background: #27500A; color: #C0DD97; }
-    .tag-maybe  { background: #633806; color: #FAC775; }
-    .tag-no     { background: #791F1F; color: #F7C1C1; }
-    .tag-close  { background: #3C3489; color: #CECBF6; }
+    .tag-opener  { background: #0C447C; color: #B5D4F4; }
+    .tag-yes     { background: #27500A; color: #C0DD97; }
+    .tag-maybe   { background: #633806; color: #FAC775; }
+    .tag-no      { background: #791F1F; color: #F7C1C1; }
+    .tag-disco   { background: #3b2a6e; color: #c4b5fd; }
+    .tag-close   { background: #3C3489; color: #CECBF6; }
   }
 
   .branch-name { font-size: 13px; font-weight: 500; color: var(--text); }
@@ -197,6 +198,23 @@
 
   .branch-body { padding: 16px 18px; background: var(--surface); }
   .script-text { font-size: 14px; line-height: 1.85; color: var(--text); white-space: pre-wrap; font-family: inherit; }
+
+  .disco-list { list-style: none; padding: 0; }
+  .disco-list li {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    margin-bottom: 8px;
+    border-left: 3px solid #c4b5fd;
+  }
+  .disco-list li:last-child { margin-bottom: 0; }
+
+  @media (prefers-color-scheme: dark) {
+    .disco-list li { border-left-color: #5b3ec8; }
+  }
 
   .branch-actions { margin-top: 12px; }
 
@@ -285,7 +303,7 @@
 
     <div class="outcomes-section" id="outcomesSection">
       <div class="outcomes-title">Business outcomes</div>
-      <p class="outcomes-hint">Add 1–2 outcomes relevant to this prospect's industry. These will drop straight into the script.</p>
+      <p class="outcomes-hint">Add 1–2 outcomes relevant to this prospect's industry — these drop straight into the script.</p>
       <div class="field">
         <label for="o1">Outcome 1</label>
         <input type="text" id="o1" placeholder="e.g. reduced fraud losses" />
@@ -307,15 +325,18 @@
 const PLAYS = {
   sp1: {
     title: 'SP1 — Prevent Fraud & Simplify Access (CIAM)',
-    play: 'prevent fraud without harming the customer experience — specifically at the sign up, log in, and account recovery moments'
+    play: 'prevent fraud without harming the customer experience — specifically at the sign up, log in, and account recovery moments',
+    discoQ: 'Is it more the fraud side or the experience side that\'s front of mind?'
   },
   sp2: {
     title: 'SP2 — Protect Against Organised Attackers (WF/B2B)',
-    play: 'protect their workforce from fake employees and over-privileged access, and cut helpdesk costs through secure self-service'
+    play: 'protect their workforce from fake employees and over-privileged access, and cut helpdesk costs through secure self-service',
+    discoQ: 'Is it more the security side or the operational costs you\'re trying to get on top of?'
   },
   sp8: {
     title: 'SP8 — Enable Agentic Trust',
-    play: 'give their AI agents proper identities — so they only access what they\'re supposed to, and every action is fully traceable'
+    play: 'give their AI agents proper identities — so they only access what they\'re supposed to, and every action is fully traceable',
+    discoQ: 'Is it more a security concern or business efficiency that you\'re thinking about here?'
   }
 };
 
@@ -354,7 +375,6 @@ function generateScript() {
     document.getElementById('output').innerHTML = '<div class="error-msg">Please fill in prospect name, industry, at least one name drop, and select a sales play.</div>';
     return;
   }
-
   if (!outcomes) {
     document.getElementById('output').innerHTML = '<div class="error-msg">Please add at least one business outcome relevant to this prospect.</div>';
     return;
@@ -363,37 +383,45 @@ function generateScript() {
   const sp = PLAYS[spKey];
   const nameDrop = nd2 ? `${nd1} and ${nd2}` : nd1;
 
-  const branches = [
+  const scriptBranches = [
     {
-      tag: 'Opener', tagClass: 'tag-opener', label: 'Opening line',
+      tag: 'Opener', tagClass: 'tag-opener', label: 'Opening line', type: 'script',
       text: `Hi ${name}, really glad I caught you. It's Rebecca here from Ping Identity — have you heard the name before?`
     },
     {
-      tag: 'Yes', tagClass: 'tag-yes', label: 'They say yes',
+      tag: 'Yes', tagClass: 'tag-yes', label: 'They say yes', type: 'script',
       text: `Perfect — saves me the intro.\n\nWe work with companies in ${industry} like ${nameDrop} to ${sp.play}. We're seeing some great results with ${outcomes}.\n\nIs that on your radar for 2026?`
     },
     {
-      tag: 'Heard a bit / unsure', tagClass: 'tag-maybe', label: "They've heard of you",
+      tag: 'Heard a bit / unsure', tagClass: 'tag-maybe', label: "They've heard of you", type: 'script',
       text: `So you know a bit about us — great.\n\nWe work with companies in ${industry} like ${nameDrop} to ${sp.play}. We're seeing some great results with ${outcomes}.\n\nIs that on your radar for 2026?`
     },
     {
-      tag: 'No', tagClass: 'tag-no', label: 'They say no',
+      tag: 'No', tagClass: 'tag-no', label: 'They say no', type: 'script',
       text: `That's exactly why I'm calling — to make the intro.\n\nWe work with companies in ${industry} like ${nameDrop} to ${sp.play}. We're seeing some great results with ${outcomes}.\n\nIs that on your radar for 2026?`
     },
     {
-      tag: 'Close', tagClass: 'tag-close', label: 'The close',
+      tag: 'Discovery', tagClass: 'tag-disco', label: 'Discovery questions', type: 'disco',
+      questions: [
+        'Is this something you\'re already feeling the pain of or more trying to get ahead of?',
+        'Have you looked at anything to solve this already or is it still early days?',
+        sp.discoQ
+      ]
+    },
+    {
+      tag: 'Close', tagClass: 'tag-close', label: 'The close', type: 'script',
       text: `Look, it sounds like this could be worthwhile.\n\nCan we find 15 minutes — when I'm not catching you off guard — to see if what we're doing for other ${industry} companies would be relevant for you this year?`
     }
   ];
 
-  window._scripts = branches.map(b => b.text);
+  window._scripts = scriptBranches.map(b => b.type === 'script' ? b.text : b.questions.map((q, i) => `${i + 1}. ${q}`).join('\n'));
 
   const html = `
     <div class="output-header">
       <span class="output-label">Script for <strong>${name}</strong> · ${sp.title}</span>
       <button class="clear-btn" onclick="document.getElementById('output').innerHTML=''">Clear</button>
     </div>
-    ${branches.map((b, i) => `
+    ${scriptBranches.map((b, i) => `
       <div class="branch">
         <div class="branch-header" onclick="toggle(${i})">
           <div class="branch-left">
@@ -403,7 +431,10 @@ function generateScript() {
           <span class="chevron open" id="chev-${i}">▼</span>
         </div>
         <div class="branch-body" id="body-${i}">
-          <div class="script-text">${b.text}</div>
+          ${b.type === 'disco'
+            ? `<ul class="disco-list">${b.questions.map(q => `<li>${q}</li>`).join('')}</ul>`
+            : `<div class="script-text">${b.text}</div>`
+          }
           <div class="branch-actions">
             <button class="copy-btn" onclick="copyText(${i}, this)">Copy</button>
           </div>
