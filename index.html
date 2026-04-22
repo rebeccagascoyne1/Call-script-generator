@@ -36,106 +36,90 @@
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 0 0 60px;
-    font-size: 15px;
-    line-height: 1.6;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; padding: 0 0 60px;
+    font-size: 15px; line-height: 1.6;
   }
 
   header {
     border-bottom: 0.5px solid var(--border);
     padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--surface);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface); position: sticky; top: 0; z-index: 10;
   }
 
   .header-left { display: flex; align-items: center; gap: 14px; }
 
   .logo {
-    width: 34px; height: 34px;
-    background: var(--ping-red);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
+    width: 34px; height: 34px; background: var(--ping-red);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
   .logo svg { width: 20px; height: 20px; }
-
   header h1 { font-size: 16px; font-weight: 600; }
   header p { font-size: 13px; color: var(--text-muted); margin-top: 1px; }
 
   .saved-btn {
-    font-size: 13px; font-weight: 500;
-    padding: 7px 14px;
-    background: var(--surface-2);
-    border: 0.5px solid var(--border-mid);
-    border-radius: var(--radius);
-    cursor: pointer; font-family: inherit;
-    color: var(--text-muted);
-    transition: background 0.12s;
-    white-space: nowrap;
+    font-size: 13px; font-weight: 500; padding: 7px 14px;
+    background: var(--surface-2); border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius); cursor: pointer; font-family: inherit;
+    color: var(--text-muted); transition: background 0.12s; white-space: nowrap;
   }
   .saved-btn:hover { background: var(--border); color: var(--text); }
   .saved-count {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 18px; height: 18px;
-    background: var(--ping-red); color: white;
-    border-radius: 50%; font-size: 11px; font-weight: 700;
-    margin-left: 6px;
+    width: 18px; height: 18px; background: var(--ping-red); color: white;
+    border-radius: 50%; font-size: 11px; font-weight: 700; margin-left: 6px;
   }
 
   .main { max-width: 780px; margin: 32px auto; padding: 0 20px; }
 
+  /* Cold/warm toggle */
+  .mode-toggle {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 14px;
+  }
+  .mode-btn {
+    padding: 14px; border-radius: var(--radius-lg);
+    border: 0.5px solid var(--border-mid);
+    background: var(--surface); cursor: pointer;
+    font-family: inherit; transition: all 0.15s;
+    text-align: left;
+  }
+  .mode-btn:hover { border-color: var(--ping-red); }
+  .mode-btn.active { border-color: var(--ping-red); border-width: 2px; background: var(--surface); }
+  .mode-btn-label { font-size: 14px; font-weight: 600; color: var(--text); display: block; margin-bottom: 3px; }
+  .mode-btn-desc { font-size: 12px; color: var(--text-muted); display: block; }
+  .mode-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border-mid); display: inline-block;
+    margin-right: 6px; vertical-align: middle; transition: background 0.15s;
+  }
+  .mode-btn.active .mode-dot { background: var(--ping-red); }
+
   .card {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 24px;
-    margin-bottom: 14px;
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 24px; margin-bottom: 14px;
   }
-
   .card-title {
-    font-size: 11px; font-weight: 600;
-    color: var(--text-hint);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 16px;
+    font-size: 11px; font-weight: 600; color: var(--text-hint);
+    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px;
   }
-
   .field { margin-bottom: 14px; }
   .field:last-child { margin-bottom: 0; }
-
   label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; }
 
   input[type="text"], select {
-    width: 100%;
-    background: var(--surface-2);
-    border: 0.5px solid var(--border-mid);
-    border-radius: var(--radius);
-    padding: 9px 12px;
-    font-size: 14px;
-    font-family: inherit;
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.15s;
-    appearance: none;
-    -webkit-appearance: none;
+    width: 100%; background: var(--surface-2);
+    border: 0.5px solid var(--border-mid); border-radius: var(--radius);
+    padding: 9px 12px; font-size: 14px; font-family: inherit; color: var(--text);
+    outline: none; transition: border-color 0.15s;
+    appearance: none; -webkit-appearance: none;
   }
-
   select {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 32px;
-    cursor: pointer;
+    background-repeat: no-repeat; background-position: right 12px center;
+    padding-right: 32px; cursor: pointer;
   }
-
   input[type="text"]:focus, select:focus { border-color: var(--ping-red); background: var(--surface); }
   input::placeholder { color: var(--text-hint); }
 
@@ -144,10 +128,8 @@
 
   .sp-preview {
     margin-top: 14px; padding: 14px 16px;
-    background: var(--surface-2);
-    border-radius: var(--radius);
-    border-left: 3px solid var(--ping-red);
-    display: none;
+    background: var(--surface-2); border-radius: var(--radius);
+    border-left: 3px solid var(--ping-red); display: none;
   }
   .sp-preview.visible { display: block; }
   .sp-preview-title { font-size: 12px; font-weight: 600; color: var(--ping-red); margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
@@ -164,29 +146,60 @@
   }
   .outcomes-hint { font-size: 12px; color: var(--text-hint); margin-bottom: 14px; line-height: 1.5; }
 
+  /* Inline fill-in-the-blank */
+  .inline-preview {
+    background: var(--surface-2); border-radius: var(--radius);
+    padding: 14px 16px; margin-bottom: 14px;
+    font-size: 14px; color: var(--text-muted); line-height: 2;
+    display: none;
+  }
+  .inline-preview.visible { display: block; }
+  .inline-preview strong { color: var(--text); }
+
+  .inline-input {
+    display: inline-block !important;
+    width: auto !important;
+    min-width: 180px;
+    max-width: 280px;
+    padding: 2px 8px !important;
+    font-size: 13px !important;
+    border-radius: 6px !important;
+    border: 1.5px dashed var(--ping-red) !important;
+    background: var(--surface) !important;
+    color: var(--ping-red) !important;
+    font-family: inherit;
+    outline: none;
+    vertical-align: middle;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .inline-input:focus {
+    border-style: solid !important;
+    background: #fff8f8 !important;
+  }
+  @media (prefers-color-scheme: dark) {
+    .inline-input:focus { background: #2a0a0c !important; }
+    .inline-input { color: #f7a0a0 !important; }
+  }
+
   .gen-btn {
     width: 100%; padding: 12px 20px; margin-top: 4px;
-    background: var(--ping-red); color: white;
-    border: none; border-radius: var(--radius);
-    font-size: 14px; font-weight: 600; font-family: inherit;
-    cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+    background: var(--ping-red); color: white; border: none;
+    border-radius: var(--radius); font-size: 14px; font-weight: 600;
+    font-family: inherit; cursor: pointer; transition: opacity 0.15s, transform 0.1s;
   }
   .gen-btn:hover { opacity: 0.88; }
   .gen-btn:active { transform: scale(0.99); }
 
   .output-section { margin-top: 10px; }
-
   .output-header { display: flex; align-items: center; justify-content: space-between; margin: 20px 0 12px; flex-wrap: wrap; gap: 8px; }
   .output-label { font-size: 13px; color: var(--text-muted); }
   .output-label strong { color: var(--text); font-weight: 500; }
-
   .output-actions { display: flex; gap: 8px; align-items: center; }
 
   .save-btn {
     font-size: 12px; padding: 5px 14px;
-    background: var(--ping-red); color: white;
-    border: none; border-radius: 6px;
-    cursor: pointer; font-family: inherit;
+    background: var(--ping-red); color: white; border: none;
+    border-radius: 6px; cursor: pointer; font-family: inherit;
     font-weight: 500; transition: opacity 0.12s;
   }
   .save-btn:hover { opacity: 0.85; }
@@ -199,14 +212,20 @@
   }
   .clear-btn:hover { color: var(--text-muted); background: var(--surface-2); }
 
-  .branch { border: 0.5px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 10px; overflow: hidden; }
+  .namedrop-note {
+    font-size: 13px; color: var(--text-muted);
+    background: var(--surface-2); border-radius: var(--radius);
+    padding: 10px 14px; margin-bottom: 12px;
+    border-left: 3px solid var(--border-mid);
+  }
+  .namedrop-note strong { color: var(--text); }
 
+  .branch { border: 0.5px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 10px; overflow: hidden; }
   .branch-header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 12px 16px; background: var(--surface-2);
     cursor: pointer; user-select: none;
-    border-bottom: 0.5px solid var(--border);
-    transition: background 0.12s;
+    border-bottom: 0.5px solid var(--border); transition: background 0.12s;
   }
   .branch-header:hover { background: var(--bg); }
   .branch-left { display: flex; align-items: center; gap: 10px; }
@@ -218,6 +237,7 @@
   .tag-no     { background: #FCEBEB; color: #A32D2D; }
   .tag-disco  { background: #f4f0fe; color: #5b3ec8; }
   .tag-close  { background: #EEEDFE; color: #3C3489; }
+  .tag-vm     { background: #f0f0f0; color: #444441; }
 
   @media (prefers-color-scheme: dark) {
     .tag-opener { background: #0C447C; color: #B5D4F4; }
@@ -226,6 +246,7 @@
     .tag-no     { background: #791F1F; color: #F7C1C1; }
     .tag-disco  { background: #3b2a6e; color: #c4b5fd; }
     .tag-close  { background: #3C3489; color: #CECBF6; }
+    .tag-vm     { background: #2C2C2A; color: #B4B2A9; }
   }
 
   .branch-name { font-size: 13px; font-weight: 500; color: var(--text); }
@@ -259,17 +280,13 @@
 
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    background: #1a1a18; color: white;
-    padding: 10px 20px; border-radius: var(--radius);
-    font-size: 13px; font-weight: 500;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.2s;
-    z-index: 100;
-    white-space: nowrap;
+    background: #1a1a18; color: white; padding: 10px 20px;
+    border-radius: var(--radius); font-size: 13px; font-weight: 500;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    z-index: 100; white-space: nowrap;
   }
   .toast.show { opacity: 1; }
 
-  /* Saved panel */
   .saved-panel {
     position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
     background: var(--surface); border-left: 0.5px solid var(--border);
@@ -278,88 +295,58 @@
     box-shadow: -4px 0 24px rgba(0,0,0,0.08);
   }
   .saved-panel.open { right: 0; }
-
   .saved-panel-header {
-    padding: 18px 20px;
-    border-bottom: 0.5px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    flex-shrink: 0;
+    padding: 18px 20px; border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
   }
   .saved-panel-title { font-size: 15px; font-weight: 600; }
-
   .close-panel-btn {
-    font-size: 20px; line-height: 1;
-    background: transparent; border: none;
-    color: var(--text-muted); cursor: pointer;
-    padding: 2px 6px;
+    font-size: 20px; line-height: 1; background: transparent; border: none;
+    color: var(--text-muted); cursor: pointer; padding: 2px 6px;
   }
   .close-panel-btn:hover { color: var(--text); }
-
   .saved-list { flex: 1; overflow-y: auto; padding: 16px; }
-
   .saved-empty { font-size: 13px; color: var(--text-hint); text-align: center; margin-top: 40px; line-height: 1.6; }
 
   .saved-item {
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    background: var(--surface-2);
-    cursor: pointer;
-    transition: border-color 0.12s;
+    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+    padding: 14px 16px; margin-bottom: 10px;
+    background: var(--surface-2); transition: border-color 0.12s;
   }
   .saved-item:hover { border-color: var(--border-mid); }
-
   .saved-item-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
   .saved-item-meta { font-size: 12px; color: var(--text-muted); }
-
   .saved-item-actions { display: flex; gap: 8px; margin-top: 10px; }
 
   .load-btn {
-    font-size: 12px; padding: 4px 12px;
-    background: var(--ping-red); color: white;
-    border: none; border-radius: 6px;
-    cursor: pointer; font-family: inherit; font-weight: 500;
+    font-size: 12px; padding: 4px 12px; background: var(--ping-red); color: white;
+    border: none; border-radius: 6px; cursor: pointer; font-family: inherit; font-weight: 500;
   }
-
   .copy-link-btn {
-    font-size: 12px; padding: 4px 12px;
-    background: transparent; color: var(--text-muted);
-    border: 0.5px solid var(--border-mid); border-radius: 6px;
-    cursor: pointer; font-family: inherit;
+    font-size: 12px; padding: 4px 12px; background: transparent; color: var(--text-muted);
+    border: 0.5px solid var(--border-mid); border-radius: 6px; cursor: pointer; font-family: inherit;
   }
   .copy-link-btn:hover { background: var(--surface); color: var(--text); }
-
   .delete-btn {
-    font-size: 12px; padding: 4px 10px;
-    background: transparent; color: var(--text-hint);
-    border: 0.5px solid var(--border); border-radius: 6px;
-    cursor: pointer; font-family: inherit; margin-left: auto;
+    font-size: 12px; padding: 4px 10px; background: transparent; color: var(--text-hint);
+    border: 0.5px solid var(--border); border-radius: 6px; cursor: pointer; font-family: inherit; margin-left: auto;
   }
   .delete-btn:hover { color: #A32D2D; border-color: #A32D2D; }
 
   .overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.2);
-    z-index: 40; opacity: 0; pointer-events: none;
-    transition: opacity 0.25s;
+    position: fixed; inset: 0; background: rgba(0,0,0,0.2);
+    z-index: 40; opacity: 0; pointer-events: none; transition: opacity 0.25s;
   }
   .overlay.show { opacity: 1; pointer-events: all; }
 
   .loaded-banner {
     background: #EAF3DE; border: 0.5px solid #C0DD97;
     border-radius: var(--radius); padding: 10px 16px;
-    font-size: 13px; color: #3B6D11;
-    margin-bottom: 14px; display: none;
+    font-size: 13px; color: #3B6D11; margin-bottom: 14px; display: none;
   }
   .loaded-banner.visible { display: block; }
-  @media (prefers-color-scheme: dark) {
-    .loaded-banner { background: #27500A; border-color: #3B6D11; color: #C0DD97; }
-  }
-
-  @media (max-width: 440px) {
-    .saved-panel { width: 100%; right: -100%; }
-  }
+  @media (prefers-color-scheme: dark) { .loaded-banner { background: #27500A; border-color: #3B6D11; color: #C0DD97; } }
+  @media (max-width: 440px) { .saved-panel { width: 100%; right: -100%; } }
 </style>
 </head>
 <body>
@@ -384,10 +371,23 @@
 
 <div class="main">
 
-  <div class="loaded-banner" id="loadedBanner">
-    Script loaded — ready to dial.
+  <div class="loaded-banner" id="loadedBanner">Script loaded — ready to dial.</div>
+
+  <!-- Cold / Warm toggle -->
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="btnCold" onclick="setMode('cold')">
+      <span class="mode-dot" id="dotCold"></span>
+      <span class="mode-btn-label">Cold call</span>
+      <span class="mode-btn-desc">No prior contact with this prospect</span>
+    </button>
+    <button class="mode-btn" id="btnWarm" onclick="setMode('warm')">
+      <span class="mode-dot" id="dotWarm"></span>
+      <span class="mode-btn-label">Warm lead</span>
+      <span class="mode-btn-desc">They've engaged with Ping before</span>
+    </button>
   </div>
 
+  <!-- Shared prospect details -->
   <div class="card">
     <div class="card-title">Prospect details</div>
     <div class="field">
@@ -410,6 +410,15 @@
     </div>
   </div>
 
+  <!-- Warm: inline fill-in-the-blank -->
+  <div class="card" id="warmOriginCard" style="display:none;">
+    <div class="card-title">How you know them</div>
+    <div class="inline-preview visible" id="inlinePreview">
+      <span style="color:var(--text-muted);">...thanks for taking my call — it's Rebecca here from Ping Identity. </span><input class="inline-input" type="text" id="warmOrigin" placeholder="you came to our event last week" oninput="updateInlinePreview()" /><span style="color:var(--text-muted);"> and I wanted to check in because...</span>
+    </div>
+  </div>
+
+  <!-- Sales play -->
   <div class="card">
     <div class="card-title">Sales play</div>
     <div class="field">
@@ -442,12 +451,10 @@
   </div>
 
   <button class="gen-btn" onclick="generateScript()">Generate script</button>
-
   <div id="output" class="output-section"></div>
 
 </div>
 
-<!-- Saved panel -->
 <div class="overlay" id="overlay" onclick="closePanel()"></div>
 <div class="saved-panel" id="savedPanel">
   <div class="saved-panel-header">
@@ -464,19 +471,34 @@ const PLAYS = {
   sp1: {
     title: 'SP1 — Prevent Fraud & Simplify Access (CIAM)',
     play: 'prevent fraud without harming the customer experience — specifically at the sign up, log in, and account recovery moments',
-    discoQ: 'Is it more the fraud side or the experience side that\'s front of mind?'
+    discoQ: 'Is it more the fraud side or the experience side that\'s front of mind?',
+    vmPhrase: 'improving customer login experience and security'
   },
   sp2: {
     title: 'SP2 — Protect Against Organised Attackers (WF/B2B)',
     play: 'protect their workforce from fake employees and over-privileged access, and cut helpdesk costs through secure self-service',
-    discoQ: 'Is it more the security side or the operational costs you\'re trying to get on top of?'
+    discoQ: 'Is it more the security side or the operational costs you\'re trying to get on top of?',
+    vmPhrase: 'workforce security and identity verification'
   },
   sp8: {
     title: 'SP8 — Enable Agentic Trust',
     play: 'give their AI agents proper identities — so they only access what they\'re supposed to, and every action is fully traceable',
-    discoQ: 'Is it more a security concern or business efficiency that you\'re thinking about here?'
+    discoQ: 'Is it more a security concern or business efficiency that you\'re thinking about here?',
+    vmPhrase: 'securing AI agents and access'
   }
 };
+
+let currentMode = 'cold';
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('btnCold').classList.toggle('active', mode === 'cold');
+  document.getElementById('btnWarm').classList.toggle('active', mode === 'warm');
+  document.getElementById('warmOriginCard').style.display = mode === 'warm' ? 'block' : 'none';
+  document.getElementById('output').innerHTML = '';
+}
+
+function updateInlinePreview() {}
 
 function onPlayChange() {
   const val = document.getElementById('spSelect').value;
@@ -490,41 +512,39 @@ function onPlayChange() {
   outcomes.classList.add('visible');
 }
 
-function getOutcomeString() {
-  const o1 = document.getElementById('o1').value.trim();
-  const o2 = document.getElementById('o2').value.trim();
-  if (o1 && o2) return `${o1} and ${o2}`;
-  return o1 || o2 || '';
-}
-
 function getFormData() {
   return {
-    name:     document.getElementById('pname').value.trim(),
-    industry: document.getElementById('industry').value.trim(),
-    nd1:      document.getElementById('nd1').value.trim(),
-    nd2:      document.getElementById('nd2').value.trim(),
-    sp:       document.getElementById('spSelect').value,
-    o1:       document.getElementById('o1').value.trim(),
-    o2:       document.getElementById('o2').value.trim()
+    mode:       currentMode,
+    name:       document.getElementById('pname').value.trim(),
+    industry:   document.getElementById('industry').value.trim(),
+    nd1:        document.getElementById('nd1').value.trim(),
+    nd2:        document.getElementById('nd2').value.trim(),
+    sp:         document.getElementById('spSelect').value,
+    o1:         document.getElementById('o1').value.trim(),
+    o2:         document.getElementById('o2').value.trim(),
+    warmOrigin: document.getElementById('warmOrigin').value.trim()
   };
 }
 
 function setFormData(d) {
-  document.getElementById('pname').value    = d.name || '';
-  document.getElementById('industry').value = d.industry || '';
-  document.getElementById('nd1').value      = d.nd1 || '';
-  document.getElementById('nd2').value      = d.nd2 || '';
-  document.getElementById('o1').value       = d.o1 || '';
-  document.getElementById('o2').value       = d.o2 || '';
-  document.getElementById('spSelect').value = d.sp || '';
+  currentMode = d.mode || 'cold';
+  setMode(currentMode);
+  document.getElementById('pname').value      = d.name || '';
+  document.getElementById('industry').value   = d.industry || '';
+  document.getElementById('nd1').value        = d.nd1 || '';
+  document.getElementById('nd2').value        = d.nd2 || '';
+  document.getElementById('o1').value         = d.o1 || '';
+  document.getElementById('o2').value         = d.o2 || '';
+  document.getElementById('spSelect').value   = d.sp || '';
+  document.getElementById('warmOrigin').value = d.warmOrigin || '';
   onPlayChange();
 }
 
-function buildBranches(d) {
+function buildColdBranches(d) {
   const sp = PLAYS[d.sp];
-  if (!sp) return [];
   const nameDrop = d.nd2 ? `${d.nd1} and ${d.nd2}` : d.nd1;
   const outcomes = d.o1 && d.o2 ? `${d.o1} and ${d.o2}` : (d.o1 || d.o2 || '');
+  const vmOutcomes = d.o1 && d.o2 ? `${d.o1} or ${d.o2}` : (d.o1 || d.o2 || '');
 
   return [
     { tag: 'Opener', tagClass: 'tag-opener', label: 'Opening line', type: 'script',
@@ -542,26 +562,52 @@ function buildBranches(d) {
         sp.discoQ
       ]},
     { tag: 'Close', tagClass: 'tag-close', label: 'The close', type: 'script',
-      text: `Look, it sounds like this could be worthwhile.\n\nCan we find 15 minutes — when I'm not catching you off guard — to see if what we're doing for other ${d.industry} companies would be relevant for you this year?` }
+      text: `Look, it sounds like this could be worthwhile.\n\nCan we find 15 minutes — when I'm not catching you off guard — to see if what we're doing for other ${d.industry} companies would be relevant for you this year?` },
+    { tag: 'Voicemail', tagClass: 'tag-vm', label: 'Voicemail', type: 'script',
+      text: `Hi ${d.name}, the reason I'm calling is because I want to see if ${vmOutcomes} is on your radar this year. Ping is working with a number of companies in ${d.industry} — the likes of ${nameDrop} — and I wanted to see if what we're doing for them around ${sp.vmPhrase} could be relevant for you. This is Rebecca from Ping Identity, you can reach me on 07850 392 669.` }
+  ];
+}
+
+function buildWarmBranches(d) {
+  const sp = PLAYS[d.sp];
+  const nameDrop = d.nd2 ? `${d.nd1} and ${d.nd2}` : d.nd1;
+  const outcomes = d.o1 && d.o2 ? `${d.o1} and ${d.o2}` : (d.o1 || d.o2 || '');
+  const vmOutcomes = d.o1 && d.o2 ? `${d.o1} and ${d.o2}` : (d.o1 || d.o2 || '');
+  const origin = d.warmOrigin || '[how you know them]';
+
+  return [
+    { tag: 'Opener', tagClass: 'tag-opener', label: 'Opening line', type: 'script',
+      text: `Hi ${d.name}, thanks for taking my call — it's Rebecca here from Ping Identity. ${origin.charAt(0).toUpperCase() + origin.slice(1)} and I wanted to check in because ${outcomes} seemed relevant for you. Have I got that right?` },
+    { tag: 'Yes', tagClass: 'tag-yes', label: 'They say yes', type: 'script',
+      text: `Great — can we find 15 minutes when I'm not calling you out of the blue to see if what we're doing for other ${d.industry} companies would be relevant for you this year?` },
+    { tag: 'No', tagClass: 'tag-no', label: 'They say no', type: 'script',
+      text: `No problem — what is front of mind for you at the moment?` },
+    { tag: 'Voicemail', tagClass: 'tag-vm', label: 'Voicemail', type: 'script',
+      text: `Hi ${d.name}, the reason I'm calling is because ${origin} and I wanted to check in because ${vmOutcomes} seemed relevant for you. Ping is working with a number of companies in ${d.industry} — the likes of ${nameDrop} — and I want to show you what we're doing to help them and find out more about your objectives. This is Rebecca from Ping Identity, you can reach me on 07850 392 669.` }
   ];
 }
 
 function renderOutput(branches, d, saved) {
   window._scripts = branches.map(b => b.type === 'script' ? b.text : b.questions.map((q, i) => `${i+1}. ${q}`).join('\n'));
   const sp = PLAYS[d.sp];
-
   const saveBtn = saved
     ? `<button class="save-btn" style="background:var(--surface-2);color:var(--text-muted);border:0.5px solid var(--border-mid);" disabled>Saved ✓</button>`
     : `<button class="save-btn" onclick="saveScript()">Save & get link</button>`;
 
+  const nameDrop = d.nd2 ? `${d.nd1} and ${d.nd2}` : d.nd1;
+  const nameDropNote = d.mode === 'warm'
+    ? `<div class="namedrop-note">💡 <strong>Name drops to use if relevant:</strong> ${nameDrop}</div>`
+    : '';
+
   document.getElementById('output').innerHTML = `
     <div class="output-header">
-      <span class="output-label">Script for <strong>${d.name}</strong> · ${sp.title}</span>
+      <span class="output-label">Script for <strong>${d.name}</strong> · ${d.mode === 'warm' ? 'Warm' : 'Cold'} · ${sp.title}</span>
       <div class="output-actions">
         ${saveBtn}
         <button class="clear-btn" onclick="document.getElementById('output').innerHTML=''">Clear</button>
       </div>
     </div>
+    ${nameDropNote}
     ${branches.map((b, i) => `
       <div class="branch">
         <div class="branch-header" onclick="toggle(${i})">
@@ -592,44 +638,38 @@ function generateScript() {
     document.getElementById('output').innerHTML = '<div class="error-msg">Please fill in prospect name, industry, at least one name drop, and select a sales play.</div>';
     return;
   }
-  const outcomes = d.o1 || d.o2;
-  if (!outcomes) {
+  if (!d.o1 && !d.o2) {
     document.getElementById('output').innerHTML = '<div class="error-msg">Please add at least one business outcome relevant to this prospect.</div>';
     return;
   }
+  if (d.mode === 'warm' && !d.warmOrigin) {
+    document.getElementById('output').innerHTML = '<div class="error-msg">Please fill in how you know this prospect.</div>';
+    return;
+  }
   window._currentData = d;
-  const branches = buildBranches(d);
+  const branches = d.mode === 'warm' ? buildWarmBranches(d) : buildColdBranches(d);
   renderOutput(branches, d, false);
 }
 
 function saveScript() {
   const d = window._currentData;
   if (!d) return;
-
   const id = 'prospect-' + d.name.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
   const saved = getSaved();
   saved[id] = { ...d, savedAt: new Date().toLocaleDateString('en-GB') };
   localStorage.setItem('ping_scripts', JSON.stringify(saved));
-
   const url = window.location.origin + window.location.pathname + '?p=' + encodeURIComponent(btoa(JSON.stringify(d)));
-  navigator.clipboard.writeText(url).then(() => {
-    showToast('Saved! Link copied to clipboard');
-  }).catch(() => {
-    showToast('Saved! Open saved scripts to get the link');
-  });
-
+  navigator.clipboard.writeText(url).then(() => showToast('Saved! Link copied to clipboard')).catch(() => showToast('Saved! Open saved scripts to get the link'));
   updateCount();
-  renderOutput(buildBranches(d), d, true);
+  renderOutput(d.mode === 'warm' ? buildWarmBranches(d) : buildColdBranches(d), d, true);
 }
 
 function getSaved() {
-  try { return JSON.parse(localStorage.getItem('ping_scripts') || '{}'); }
-  catch { return {}; }
+  try { return JSON.parse(localStorage.getItem('ping_scripts') || '{}'); } catch { return {}; }
 }
 
 function updateCount() {
-  const count = Object.keys(getSaved()).length;
-  document.getElementById('savedCount').textContent = count;
+  document.getElementById('savedCount').textContent = Object.keys(getSaved()).length;
 }
 
 function openPanel() {
@@ -647,23 +687,21 @@ function renderSavedList() {
   const saved = getSaved();
   const list = document.getElementById('savedList');
   const keys = Object.keys(saved).reverse();
-
   if (!keys.length) {
     list.innerHTML = '<p class="saved-empty">No saved scripts yet.<br>Generate a script and hit "Save & get link".</p>';
     return;
   }
-
   list.innerHTML = keys.map(id => {
     const s = saved[id];
     const sp = PLAYS[s.sp];
-    const url = window.location.origin + window.location.pathname + '?p=' + encodeURIComponent(btoa(JSON.stringify(s)));
+    const modeLabel = s.mode === 'warm' ? 'Warm' : 'Cold';
     return `
       <div class="saved-item">
         <div class="saved-item-name">${s.name}</div>
-        <div class="saved-item-meta">${s.industry} · ${sp ? sp.title.split('—')[0].trim() : ''} · Saved ${s.savedAt}</div>
+        <div class="saved-item-meta">${s.industry} · ${modeLabel} · ${sp ? sp.title.split('—')[0].trim() : ''} · Saved ${s.savedAt}</div>
         <div class="saved-item-actions">
           <button class="load-btn" onclick="loadScript('${id}')">Load</button>
-          <button class="copy-link-btn" onclick="copyLink('${encodeURIComponent(btoa(JSON.stringify(saved[id])))}', this)">Copy link</button>
+          <button class="copy-link-btn" onclick="copyLink('${encodeURIComponent(btoa(JSON.stringify(s)))}', this)">Copy link</button>
           <button class="delete-btn" onclick="deleteScript('${id}')">Delete</button>
         </div>
       </div>
@@ -677,7 +715,7 @@ function loadScript(id) {
   if (!d) return;
   setFormData(d);
   window._currentData = d;
-  const branches = buildBranches(d);
+  const branches = d.mode === 'warm' ? buildWarmBranches(d) : buildColdBranches(d);
   renderOutput(branches, d, true);
   closePanel();
   document.getElementById('loadedBanner').classList.add('visible');
@@ -702,8 +740,7 @@ function deleteScript(id) {
 
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
@@ -722,7 +759,6 @@ function copyText(i, btn) {
   });
 }
 
-// On load — check for URL param
 (function init() {
   updateCount();
   const params = new URLSearchParams(window.location.search);
@@ -732,7 +768,7 @@ function copyText(i, btn) {
       const d = JSON.parse(atob(decodeURIComponent(p)));
       setFormData(d);
       window._currentData = d;
-      const branches = buildBranches(d);
+      const branches = d.mode === 'warm' ? buildWarmBranches(d) : buildColdBranches(d);
       renderOutput(branches, d, true);
       document.getElementById('loadedBanner').classList.add('visible');
       setTimeout(() => document.getElementById('loadedBanner').classList.remove('visible'), 4000);
