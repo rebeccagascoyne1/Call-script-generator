@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ping Identity — Call Script Generator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --surface-2: #f4f4f2;
+    --border: rgba(0,0,0,0.10);
+    --border-mid: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text-muted: #6b6b68;
+    --text-hint: #9b9b97;
+    --radius: 10px;
+    --radius-lg: 14px;
+    --ping-red: #d0021b;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141413;
+      --surface: #1e1e1c;
+      --surface-2: #272725;
+      --border: rgba(255,255,255,0.08);
+      --border-mid: rgba(255,255,255,0.14);
+      --text: #f0f0ee;
+      --text-muted: #a0a09c;
+      --text-hint: #666663;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 60px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  header {
+    border-bottom: 0.5px solid var(--border);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .logo {
+    width: 34px; height: 34px;
+    background: var(--ping-red);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .logo svg { width: 20px; height: 20px; }
+
+  header h1 { font-size: 16px; font-weight: 600; }
+  header p { font-size: 13px; color: var(--text-muted); margin-top: 1px; }
+
+  .main { max-width: 780px; margin: 32px auto; padding: 0 20px; }
+
+  .card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 14px;
+  }
+
+  .card-title {
+    font-size: 11px; font-weight: 600;
+    color: var(--text-hint);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+
+  label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; }
+
+  input[type="text"], select {
+    width: 100%;
+    background: var(--surface-2);
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius);
+    padding: 9px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+
+  input[type="text"]:focus, select:focus { border-color: var(--ping-red); background: var(--surface); }
+  input::placeholder { color: var(--text-hint); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 520px) { .two-col { grid-template-columns: 1fr; } }
+
+  .sp-preview {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: var(--surface-2);
+    border-radius: var(--radius);
+    border-left: 3px solid var(--ping-red);
+    display: none;
+  }
+  .sp-preview.visible { display: block; }
+  .sp-preview-title { font-size: 12px; font-weight: 600; color: var(--ping-red); margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .sp-preview p { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+  .sp-preview strong { color: var(--text); font-weight: 500; }
+
+  .outcomes-section {
+    margin-top: 14px;
+    display: none;
+  }
+  .outcomes-section.visible { display: block; }
+  .outcomes-title {
+    font-size: 11px; font-weight: 600;
+    color: var(--text-hint);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 0.5px solid var(--border);
+  }
+  .outcomes-hint { font-size: 12px; color: var(--text-hint); margin-bottom: 14px; line-height: 1.5; }
+
+  .gen-btn {
+    width: 100%; padding: 12px 20px; margin-top: 4px;
+    background: var(--ping-red); color: white;
+    border: none; border-radius: var(--radius);
+    font-size: 14px; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+  }
+  .gen-btn:hover { opacity: 0.88; }
+  .gen-btn:active { transform: scale(0.99); }
+
+  .output-section { margin-top: 10px; }
+
+  .branch { border: 0.5px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 10px; overflow: hidden; }
+
+  .branch-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--surface-2);
+    cursor: pointer; user-select: none;
+    border-bottom: 0.5px solid var(--border);
+    transition: background 0.12s;
+  }
+  .branch-header:hover { background: var(--bg); }
+  .branch-left { display: flex; align-items: center; gap: 10px; }
+
+  .branch-tag { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; letter-spacing: 0.03em; }
+  .tag-opener { background: #e6f1fb; color: #185FA5; }
+  .tag-yes    { background: #EAF3DE; color: #3B6D11; }
+  .tag-maybe  { background: #FAEEDA; color: #854F0B; }
+  .tag-no     { background: #FCEBEB; color: #A32D2D; }
+  .tag-close  { background: #EEEDFE; color: #3C3489; }
+
+  @media (prefers-color-scheme: dark) {
+    .tag-opener { background: #0C447C; color: #B5D4F4; }
+    .tag-yes    { background: #27500A; color: #C0DD97; }
+    .tag-maybe  { background: #633806; color: #FAC775; }
+    .tag-no     { background: #791F1F; color: #F7C1C1; }
+    .tag-close  { background: #3C3489; color: #CECBF6; }
+  }
+
+  .branch-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .chevron { font-size: 10px; color: var(--text-muted); transition: transform 0.2s; display: inline-block; }
+  .chevron.open { transform: rotate(180deg); }
+
+  .branch-body { padding: 16px 18px; background: var(--surface); }
+  .script-text { font-size: 14px; line-height: 1.85; color: var(--text); white-space: pre-wrap; font-family: inherit; }
+
+  .branch-actions { margin-top: 12px; }
+
+  .copy-btn {
+    font-size: 12px; padding: 5px 12px;
+    background: transparent; color: var(--text-muted);
+    border: 0.5px solid var(--border-mid); border-radius: 6px;
+    cursor: pointer; font-family: inherit; transition: background 0.12s;
+  }
+  .copy-btn:hover { background: var(--surface-2); color: var(--text); }
+
+  .error-msg { font-size: 13px; color: #A32D2D; padding: 12px 16px; background: #FCEBEB; border-radius: var(--radius); margin-top: 8px; }
+  @media (prefers-color-scheme: dark) { .error-msg { background: #2a0a0c; color: #F7C1C1; } }
+
+  .output-header { display: flex; align-items: center; justify-content: space-between; margin: 20px 0 12px; }
+  .output-label { font-size: 13px; color: var(--text-muted); }
+  .output-label strong { color: var(--text); font-weight: 500; }
+
+  .clear-btn {
+    font-size: 12px; padding: 4px 10px;
+    background: transparent; color: var(--text-hint);
+    border: 0.5px solid var(--border); border-radius: 6px;
+    cursor: pointer; font-family: inherit;
+  }
+  .clear-btn:hover { color: var(--text-muted); background: var(--surface-2); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="8" fill="none" stroke="white" stroke-width="2.5"/>
+      <circle cx="12" cy="12" r="3" fill="white"/>
+    </svg>
+  </div>
+  <div>
+    <h1>Call Script Generator</h1>
+    <p>Ping Identity — SDR outbound tool</p>
+  </div>
+</header>
+
+<div class="main">
+
+  <div class="card">
+    <div class="card-title">Prospect details</div>
+
+    <div class="field">
+      <label for="pname">Prospect first name</label>
+      <input type="text" id="pname" placeholder="e.g. James" />
+    </div>
+
+    <div class="field">
+      <label for="industry">Industry</label>
+      <input type="text" id="industry" placeholder="e.g. retail, fintech, healthcare" />
+    </div>
+
+    <div class="two-col">
+      <div class="field">
+        <label for="nd1">Name drop 1</label>
+        <input type="text" id="nd1" placeholder="e.g. Tesco Mobile" />
+      </div>
+      <div class="field">
+        <label for="nd2">Name drop 2 (optional)</label>
+        <input type="text" id="nd2" placeholder="e.g. Victoria's Secret" />
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Sales play</div>
+    <div class="field">
+      <label for="spSelect">Select play</label>
+      <select id="spSelect" onchange="onPlayChange()">
+        <option value="">— choose a play —</option>
+        <option value="sp1">SP1 — Prevent Fraud & Simplify Access (CIAM)</option>
+        <option value="sp2">SP2 — Protect Against Organised Attackers (WF/B2B)</option>
+        <option value="sp8">SP8 — Enable Agentic Trust</option>
+      </select>
+    </div>
+
+    <div class="sp-preview" id="spPreview">
+      <div class="sp-preview-title" id="previewTitle"></div>
+      <p><strong>What we do:</strong> <span id="previewPlay"></span></p>
+    </div>
+
+    <div class="outcomes-section" id="outcomesSection">
+      <div class="outcomes-title">Business outcomes</div>
+      <p class="outcomes-hint">Add 1–2 outcomes relevant to this prospect's industry. These will drop straight into the script.</p>
+      <div class="field">
+        <label for="o1">Outcome 1</label>
+        <input type="text" id="o1" placeholder="e.g. reduced fraud losses" />
+      </div>
+      <div class="field">
+        <label for="o2">Outcome 2 (optional)</label>
+        <input type="text" id="o2" placeholder="e.g. improved patient login experience" />
+      </div>
+    </div>
+  </div>
+
+  <button class="gen-btn" onclick="generateScript()">Generate script</button>
+
+  <div id="output" class="output-section"></div>
+
+</div>
+
+<script>
+const PLAYS = {
+  sp1: {
+    title: 'SP1 — Prevent Fraud & Simplify Access (CIAM)',
+    play: 'prevent fraud without harming the customer experience — specifically at the sign up, log in, and account recovery moments'
+  },
+  sp2: {
+    title: 'SP2 — Protect Against Organised Attackers (WF/B2B)',
+    play: 'protect their workforce from fake employees and over-privileged access, and cut helpdesk costs through secure self-service'
+  },
+  sp8: {
+    title: 'SP8 — Enable Agentic Trust',
+    play: 'give their AI agents proper identities — so they only access what they\'re supposed to, and every action is fully traceable'
+  }
+};
+
+function onPlayChange() {
+  const val = document.getElementById('spSelect').value;
+  const preview = document.getElementById('spPreview');
+  const outcomes = document.getElementById('outcomesSection');
+  if (!val) {
+    preview.classList.remove('visible');
+    outcomes.classList.remove('visible');
+    return;
+  }
+  const p = PLAYS[val];
+  document.getElementById('previewTitle').textContent = p.title;
+  document.getElementById('previewPlay').textContent = p.play;
+  preview.classList.add('visible');
+  outcomes.classList.add('visible');
+}
+
+function getOutcomeString() {
+  const o1 = document.getElementById('o1').value.trim();
+  const o2 = document.getElementById('o2').value.trim();
+  if (o1 && o2) return `${o1} and ${o2}`;
+  return o1 || o2 || '';
+}
+
+function generateScript() {
+  const name     = document.getElementById('pname').value.trim();
+  const industry = document.getElementById('industry').value.trim();
+  const nd1      = document.getElementById('nd1').value.trim();
+  const nd2      = document.getElementById('nd2').value.trim();
+  const spKey    = document.getElementById('spSelect').value;
+  const outcomes = getOutcomeString();
+
+  if (!name || !industry || !nd1 || !spKey) {
+    document.getElementById('output').innerHTML = '<div class="error-msg">Please fill in prospect name, industry, at least one name drop, and select a sales play.</div>';
+    return;
+  }
+
+  if (!outcomes) {
+    document.getElementById('output').innerHTML = '<div class="error-msg">Please add at least one business outcome relevant to this prospect.</div>';
+    return;
+  }
+
+  const sp = PLAYS[spKey];
+  const nameDrop = nd2 ? `${nd1} and ${nd2}` : nd1;
+
+  const branches = [
+    {
+      tag: 'Opener', tagClass: 'tag-opener', label: 'Opening line',
+      text: `Hi ${name}, really glad I caught you. It's Rebecca here from Ping Identity — have you heard the name before?`
+    },
+    {
+      tag: 'Yes', tagClass: 'tag-yes', label: 'They say yes',
+      text: `Perfect — saves me the intro.\n\nWe work with companies in ${industry} like ${nameDrop} to ${sp.play}. We're seeing some great results with ${outcomes}.\n\nIs that on your radar for 2026?`
+    },
+    {
+      tag: 'Heard a bit / unsure', tagClass: 'tag-maybe', label: "They've heard of you",
+      text: `So you know a bit about us — great.\n\nWe work with companies in ${industry} like ${nameDrop} to ${sp.play}. We're seeing some great results with ${outcomes}.\n\nIs that on your radar for 2026?`
+    },
+    {
+      tag: 'No', tagClass: 'tag-no', label: 'They say no',
+      text: `That's exactly why I'm calling — to make the intro.\n\nWe work with companies in ${industry} like ${nameDrop} to ${sp.play}. We're seeing some great results with ${outcomes}.\n\nIs that on your radar for 2026?`
+    },
+    {
+      tag: 'Close', tagClass: 'tag-close', label: 'The close',
+      text: `Look, it sounds like this could be worthwhile.\n\nCan we find 15 minutes — when I'm not catching you off guard — to see if what we're doing for other ${industry} companies would be relevant for you this year?`
+    }
+  ];
+
+  window._scripts = branches.map(b => b.text);
+
+  const html = `
+    <div class="output-header">
+      <span class="output-label">Script for <strong>${name}</strong> · ${sp.title}</span>
+      <button class="clear-btn" onclick="document.getElementById('output').innerHTML=''">Clear</button>
+    </div>
+    ${branches.map((b, i) => `
+      <div class="branch">
+        <div class="branch-header" onclick="toggle(${i})">
+          <div class="branch-left">
+            <span class="branch-tag ${b.tagClass}">${b.tag}</span>
+            <span class="branch-name">${b.label}</span>
+          </div>
+          <span class="chevron open" id="chev-${i}">▼</span>
+        </div>
+        <div class="branch-body" id="body-${i}">
+          <div class="script-text">${b.text}</div>
+          <div class="branch-actions">
+            <button class="copy-btn" onclick="copyText(${i}, this)">Copy</button>
+          </div>
+        </div>
+      </div>
+    `).join('')}
+  `;
+
+  document.getElementById('output').innerHTML = html;
+  document.getElementById('output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggle(i) {
+  const body = document.getElementById('body-' + i);
+  const chev = document.getElementById('chev-' + i);
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  chev.classList.toggle('open', !open);
+}
+
+function copyText(i, btn) {
+  navigator.clipboard.writeText(window._scripts?.[i] || '').then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+</script>
+</body>
+</html>
