@@ -441,11 +441,11 @@
       <p class="outcomes-hint">Add 1–2 outcomes relevant to this prospect's industry — these drop straight into the script.</p>
       <div class="field">
         <label for="o1">Outcome 1</label>
-        <input type="text" id="o1" placeholder="e.g. reduced fraud losses" />
+        <input type="text" id="o1" placeholder="e.g. reducing loyalty fraud" />
       </div>
       <div class="field">
         <label for="o2">Outcome 2 (optional)</label>
-        <input type="text" id="o2" placeholder="e.g. improved patient login experience" />
+        <input type="text" id="o2" placeholder="e.g. improving customer conversion at login" />
       </div>
     </div>
   </div>
@@ -472,19 +472,25 @@ const PLAYS = {
     title: 'SP1 — Prevent Fraud & Simplify Access (CIAM)',
     play: 'prevent fraud without harming the customer experience — specifically at the sign up, log in, and account recovery moments',
     discoQ: 'Is it more the fraud side or the experience side that\'s front of mind?',
-    vmPhrase: 'improving customer login experience and security'
+    vmPhrase: 'improving customer login experience and security',
+    o1hint: 'e.g. reducing loyalty fraud',
+    o2hint: 'e.g. improving customer conversion at login'
   },
   sp2: {
     title: 'SP2 — Protect Against Organised Attackers (WF/B2B)',
     play: 'protect their workforce from fake employees and over-privileged access, and cut helpdesk costs through secure self-service',
     discoQ: 'Is it more the security side or the operational costs you\'re trying to get on top of?',
-    vmPhrase: 'workforce security and identity verification'
+    vmPhrase: 'workforce security and identity verification',
+    o1hint: 'e.g. reducing employee impersonation risk',
+    o2hint: 'e.g. cutting helpdesk costs'
   },
   sp8: {
     title: 'SP8 — Enable Agentic Trust',
     play: 'give their AI agents proper identities — so they only access what they\'re supposed to, and every action is fully traceable',
     discoQ: 'Is it more a security concern or business efficiency that you\'re thinking about here?',
-    vmPhrase: 'securing AI agents and access'
+    vmPhrase: 'securing AI agents and access',
+    o1hint: 'e.g. reducing risk from overprovisioned AI agents',
+    o2hint: 'e.g. improving auditability across AI deployments'
   }
 };
 
@@ -508,6 +514,8 @@ function onPlayChange() {
   const p = PLAYS[val];
   document.getElementById('previewTitle').textContent = p.title;
   document.getElementById('previewPlay').textContent = p.play;
+  document.getElementById('o1').placeholder = p.o1hint;
+  document.getElementById('o2').placeholder = p.o2hint;
   preview.classList.add('visible');
   outcomes.classList.add('visible');
 }
@@ -562,7 +570,7 @@ function buildColdBranches(d) {
         sp.discoQ
       ]},
     { tag: 'Close', tagClass: 'tag-close', label: 'The close', type: 'script',
-      text: `Look, it sounds like this could be worthwhile.\n\nCan we find 15 minutes — when I'm not catching you off guard — to see if what we're doing for other ${d.industry} companies would be relevant for you this year?` },
+      text: `Look, it sounds like this could be worthwhile.\n\nCan we find 15 minutes — when I'm not calling you out of the blue — to see if what we're doing for other ${d.industry} companies would be relevant for you this year?` },
     { tag: 'Voicemail', tagClass: 'tag-vm', label: 'Voicemail', type: 'script',
       text: `Hi ${d.name}, the reason I'm calling is because I want to see if ${vmOutcomes} is on your radar this year. Ping is working with a number of companies in ${d.industry} — the likes of ${nameDrop} — and I wanted to see if what we're doing for them around ${sp.vmPhrase} could be relevant for you. This is Rebecca from Ping Identity, you can reach me on 07850 392 669.` }
   ];
@@ -579,7 +587,7 @@ function buildWarmBranches(d) {
     { tag: 'Opener', tagClass: 'tag-opener', label: 'Opening line', type: 'script',
       text: `Hi ${d.name}, thanks for taking my call — it's Rebecca here from Ping Identity. ${origin.charAt(0).toUpperCase() + origin.slice(1)} and I wanted to check in because ${outcomes} seemed relevant for you. Have I got that right?` },
     { tag: 'Yes', tagClass: 'tag-yes', label: 'They say yes', type: 'script',
-      text: `Great — can we find 15 minutes when I'm not calling you out of the blue to see if what we're doing for other ${d.industry} companies would be relevant for you this year?` },
+      text: `Great — can we find 15 minutes when I'm not calling you on a random [DAY OF WEEK] to see if what we're doing for other ${d.industry} companies would be relevant for you this year?` },
     { tag: 'No', tagClass: 'tag-no', label: 'They say no', type: 'script',
       text: `No problem — what is front of mind for you at the moment?` },
     { tag: 'Voicemail', tagClass: 'tag-vm', label: 'Voicemail', type: 'script',
