@@ -408,6 +408,10 @@
         <input type="text" id="nd2" placeholder="e.g. Victoria's Secret" />
       </div>
     </div>
+    <div class="field">
+      <label for="aename">AE name</label>
+      <input type="text" id="aename" placeholder="e.g. John Smith" />
+    </div>
   </div>
 
   <!-- Warm: inline fill-in-the-blank -->
@@ -527,6 +531,7 @@ function getFormData() {
     industry:   document.getElementById('industry').value.trim(),
     nd1:        document.getElementById('nd1').value.trim(),
     nd2:        document.getElementById('nd2').value.trim(),
+    aename:     document.getElementById('aename').value.trim(),
     sp:         document.getElementById('spSelect').value,
     o1:         document.getElementById('o1').value.trim(),
     o2:         document.getElementById('o2').value.trim(),
@@ -541,7 +546,7 @@ function setFormData(d) {
   document.getElementById('industry').value   = d.industry || '';
   document.getElementById('nd1').value        = d.nd1 || '';
   document.getElementById('nd2').value        = d.nd2 || '';
-  document.getElementById('o1').value         = d.o1 || '';
+  document.getElementById('aename').value       = d.aename || '';
   document.getElementById('o2').value         = d.o2 || '';
   document.getElementById('spSelect').value   = d.sp || '';
   document.getElementById('warmOrigin').value = d.warmOrigin || '';
@@ -570,7 +575,7 @@ function buildColdBranches(d) {
         sp.discoQ
       ]},
     { tag: 'Close', tagClass: 'tag-close', label: 'The close', type: 'script',
-      text: `Look, it sounds like this could be worthwhile.\n\nCan we find 15 minutes — when I'm not calling you out of the blue — to see if what we're doing for other ${d.industry} companies would be relevant for you this year?` },
+      text: `Look, it sounds like this could be a worthwhile conversation. What I'd love to do is find 15 minutes in your calendar — when I'm not calling you out of the blue — I'd bring in ${d.aename || '[AE NAME]'} who specialises in ${d.industry}, to see if what we're doing for other ${d.industry} companies would work for what you're focused on this year.` },
     { tag: 'Voicemail', tagClass: 'tag-vm', label: 'Voicemail', type: 'script',
       text: `Hi ${d.name}, the reason I'm calling is because I want to see if ${vmOutcomes} is on your radar this year. Ping is working with a number of companies in ${d.industry} — the likes of ${nameDrop} — and I wanted to see if what we're doing for them around ${sp.vmPhrase} could be relevant for you. This is Rebecca from Ping Identity, you can reach me on 07850 392 669.` }
   ];
@@ -587,7 +592,7 @@ function buildWarmBranches(d) {
     { tag: 'Opener', tagClass: 'tag-opener', label: 'Opening line', type: 'script',
       text: `Hi ${d.name}, thanks for taking my call — it's Rebecca here from Ping Identity. ${origin.charAt(0).toUpperCase() + origin.slice(1)} and I wanted to check in because ${outcomes} seemed relevant for you. Have I got that right?` },
     { tag: 'Yes', tagClass: 'tag-yes', label: 'They say yes', type: 'script',
-      text: `Great — can we find 15 minutes when I'm not calling you on a random [DAY OF WEEK] to see if what we're doing for other ${d.industry} companies would be relevant for you this year?` },
+      text: `Look, it sounds like this could be a worthwhile conversation. What I'd love to do is find 15 minutes in your calendar — when I'm not calling you on a random [DAY OF WEEK] — I'd bring in ${d.aename || '[AE NAME]'} who specialises in ${d.industry}, to see if what we're doing for other ${d.industry} companies would work for what you're focused on this year.` },
     { tag: 'No', tagClass: 'tag-no', label: 'They say no', type: 'script',
       text: `No problem — what is front of mind for you at the moment?` },
     { tag: 'Voicemail', tagClass: 'tag-vm', label: 'Voicemail', type: 'script',
