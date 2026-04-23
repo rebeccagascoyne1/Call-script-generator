@@ -275,10 +275,47 @@
   }
   .copy-btn:hover { background: var(--surface-2); color: var(--text); }
 
-  .error-msg { font-size: 13px; color: #A32D2D; padding: 12px 16px; background: #FCEBEB; border-radius: var(--radius); margin-top: 8px; }
+  .prep-box {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .prep-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; background: var(--surface-2);
+    cursor: pointer; user-select: none;
+    transition: background 0.12s;
+  }
+  .prep-header:hover { background: var(--bg); }
+  .prep-title { font-size: 13px; font-weight: 500; color: var(--text); }
+  .prep-tag {
+    font-size: 11px; font-weight: 600; padding: 3px 9px;
+    border-radius: 20px; letter-spacing: 0.03em;
+    background: #f4f4f2; color: #5F5E5A; margin-right: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .prep-tag { background: #2C2C2A; color: #B4B2A9; }
+  }
+  .prep-body { padding: 14px 16px; background: var(--surface); display: none; }
+  .prep-body.open { display: block; }
+  .prep-textarea {
+    width: 100%; min-height: 120px;
+    background: var(--surface-2);
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    font-size: 13px; font-family: inherit;
+    color: var(--text); line-height: 1.6;
+    resize: vertical; outline: none;
+    transition: border-color 0.15s;
+  }
+  .prep-textarea:focus { border-color: var(--ping-red); background: var(--surface); }
+  .prep-textarea::placeholder { color: var(--text-hint); }
+  .prep-hint { font-size: 12px; color: var(--text-hint); margin-bottom: 8px; line-height: 1.5; }
   @media (prefers-color-scheme: dark) { .error-msg { background: #2a0a0c; color: #F7C1C1; } }
 
-  .toast {
+  .error-msg { font-size: 13px; color: #A32D2D; padding: 12px 16px; background: #FCEBEB; border-radius: var(--radius); margin-top: 8px; }
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     background: #1a1a18; color: white; padding: 10px 20px;
     border-radius: var(--radius); font-size: 13px; font-weight: 500;
@@ -422,6 +459,13 @@
     </div>
   </div>
 
+  <!-- Call prep notes -->
+  <div class="card">
+    <div class="card-title">Call preparation notes</div>
+    <p class="prep-hint" style="margin-bottom:10px;">Add your research before you dial — trigger, specific pain, best proof point. Saves with the script.</p>
+    <textarea class="prep-textarea" id="prepNotes" placeholder="e.g. Coca-Cola CFO has publicly committed to making Costa perform better — digital efficiency is now the top priority, making this the right window to call..."></textarea>
+  </div>
+
   <!-- Sales play -->
   <div class="card">
     <div class="card-title">Sales play</div>
@@ -535,7 +579,8 @@ function getFormData() {
     sp:         document.getElementById('spSelect').value,
     o1:         document.getElementById('o1').value.trim(),
     o2:         document.getElementById('o2').value.trim(),
-    warmOrigin: document.getElementById('warmOrigin').value.trim()
+    warmOrigin: document.getElementById('warmOrigin').value.trim(),
+    prepNotes:  document.getElementById('prepNotes').value.trim()
   };
 }
 
@@ -551,6 +596,7 @@ function setFormData(d) {
   document.getElementById('o2').value         = d.o2 || '';
   document.getElementById('spSelect').value   = d.sp || '';
   document.getElementById('warmOrigin').value = d.warmOrigin || '';
+  document.getElementById('prepNotes').value  = d.prepNotes || '';
   onPlayChange();
 }
 
@@ -613,6 +659,21 @@ function renderOutput(branches, d, saved) {
     ? `<div class="namedrop-note">💡 <strong>Name drops to use if relevant:</strong> ${nameDrop}</div>`
     : '';
 
+  const prepNotes = d.prepNotes || '';
+  const prepSection = prepNotes ? `
+    <div class="prep-box" style="margin-bottom:10px;">
+      <div class="prep-header" onclick="togglePrep()">
+        <div class="branch-left">
+          <span class="prep-tag">Prep</span>
+          <span class="prep-title">Call preparation notes</span>
+        </div>
+        <span class="chevron" id="prepChev">▼</span>
+      </div>
+      <div class="prep-body" id="prepBody">
+        <div class="script-text" style="font-size:13px;color:var(--text-muted);">${prepNotes}</div>
+      </div>
+    </div>` : '';
+
   document.getElementById('output').innerHTML = `
     <div class="output-header">
       <span class="output-label">Script for <strong>${d.name}</strong> · ${d.mode === 'warm' ? 'Warm' : 'Cold'} · ${sp.title}</span>
@@ -621,6 +682,7 @@ function renderOutput(branches, d, saved) {
         <button class="clear-btn" onclick="document.getElementById('output').innerHTML=''">Clear</button>
       </div>
     </div>
+    ${prepSection}
     ${nameDropNote}
     ${branches.map((b, i) => `
       <div class="branch">
@@ -756,6 +818,20 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function togglePrep() {
+  const body = document.getElementById('prepBody');
+  const chev = document.getElementById('prepChev');
+  const open = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  chev.classList.toggle('open', !open);
+}
+
+function savePrepNotes() {
+  if (window._currentData) {
+    window._currentData.prepNotes = document.getElementById('prepNotes').value;
+  }
 }
 
 function toggle(i) {
