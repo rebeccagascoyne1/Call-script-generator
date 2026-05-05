@@ -542,7 +542,13 @@ const PLAYS = {
   }
 };
 
-let currentMode = 'cold';
+function safeEncode(obj) {
+  return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(obj)))));
+}
+
+function safeDecode(str) {
+  return JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(str)))));
+}
 
 function setMode(mode) {
   currentMode = mode;
@@ -734,7 +740,7 @@ function saveScript() {
   const saved = getSaved();
   saved[id] = { ...d, savedAt: new Date().toLocaleDateString('en-GB') };
   localStorage.setItem('ping_scripts', JSON.stringify(saved));
-  const url = window.location.origin + window.location.pathname + '?p=' + encodeURIComponent(btoa(JSON.stringify(d)));
+  const url = window.location.origin + window.location.pathname + '?p=' + safeEncode(d);
   navigator.clipboard.writeText(url).then(() => showToast('Saved! Link copied to clipboard')).catch(() => showToast('Saved! Open saved scripts to get the link'));
   updateCount();
   renderOutput(d.mode === 'warm' ? buildWarmBranches(d) : buildColdBranches(d), d, true);
@@ -777,7 +783,7 @@ function renderSavedList() {
         <div class="saved-item-meta">${s.industry} · ${modeLabel} · ${sp ? sp.title.split('—')[0].trim() : ''} · Saved ${s.savedAt}</div>
         <div class="saved-item-actions">
           <button class="load-btn" onclick="loadScript('${id}')">Load</button>
-          <button class="copy-link-btn" onclick="copyLink('${encodeURIComponent(btoa(JSON.stringify(s)))}', this)">Copy link</button>
+      <button class="copy-link-btn" onclick="copyLink('${safeEncode(s)}', this)">Copy link</button>
           <button class="delete-btn" onclick="deleteScript('${id}')">Delete</button>
         </div>
       </div>
@@ -855,7 +861,7 @@ function copyText(i, btn) {
   const p = params.get('p');
   if (p) {
     try {
-      const d = JSON.parse(atob(decodeURIComponent(p)));
+      const d = safeDecode(p);
       setFormData(d);
       window._currentData = d;
       const branches = d.mode === 'warm' ? buildWarmBranches(d) : buildColdBranches(d);
