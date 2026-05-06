@@ -542,6 +542,8 @@ const PLAYS = {
   }
 };
 
+let currentMode = 'cold';
+
 function safeEncode(obj) {
   return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(obj)))));
 }
@@ -616,11 +618,11 @@ function buildColdBranches(d) {
     { tag: 'Opener', tagClass: 'tag-opener', label: 'Opening line', type: 'script',
       text: `Hi ${d.name}, really glad I caught you. It's Rebecca here from Ping Identity — have you heard the name before?` },
     { tag: 'Yes', tagClass: 'tag-yes', label: 'They say yes', type: 'script',
-      text: `Perfect — saves me the intro.\n\nWe work with companies in ${d.industry} like ${nameDrop} to ${sp.play}. We're seeing some great results with ${outcomes}.\n\nIs that on your radar for 2026?` },
+      text: `Perfect — saves me the intro.\n\nWe work with companies in ${d.industry} like ${nameDrop} to ${sp.play}. We're seeing some great results for these companies with things like ${outcomes}.\n\nIs that on your radar for 2026?` },
     { tag: 'Heard a bit / unsure', tagClass: 'tag-maybe', label: "They've heard of you", type: 'script',
-      text: `So you know a bit about us — great.\n\nWe work with companies in ${d.industry} like ${nameDrop} to ${sp.play}. We're seeing some great results with ${outcomes}.\n\nIs that on your radar for 2026?` },
+      text: `So you know a bit about us — great.\n\nWe work with companies in ${d.industry} like ${nameDrop} to ${sp.play}. We're seeing some great results for these companies with things like ${outcomes}.\n\nIs that on your radar for 2026?` },
     { tag: 'No', tagClass: 'tag-no', label: 'They say no', type: 'script',
-      text: `That's exactly why I'm calling — to make the intro.\n\nWe work with companies in ${d.industry} like ${nameDrop} to ${sp.play}. We're seeing some great results with ${outcomes}.\n\nIs that on your radar for 2026?` },
+      text: `That's exactly why I'm calling — to make the intro.\n\nWe work with companies in ${d.industry} like ${nameDrop} to ${sp.play}. We're seeing some great results for these companies with things like ${outcomes}.\n\nIs that on your radar for 2026?` },
     { tag: 'Discovery', tagClass: 'tag-disco', label: 'Discovery questions', type: 'disco',
       questions: [
         'Is this something you\'re already feeling the pain of or more trying to get ahead of?',
@@ -643,7 +645,7 @@ function buildWarmBranches(d) {
 
   return [
     { tag: 'Opener', tagClass: 'tag-opener', label: 'Opening line', type: 'script',
-      text: `Hi ${d.name}, thanks for taking my call — it's Rebecca here from Ping Identity. ${origin.charAt(0).toUpperCase() + origin.slice(1)} and I wanted to check in because ${outcomes} seemed relevant for you. Have I got that right?` },
+      text: `Hi ${d.name}, thanks for taking my call — it's Rebecca here from Ping Identity. ${origin.charAt(0).toUpperCase() + origin.slice(1)} and I wanted to check in because we're seeing some great results for companies in ${d.industry} with things like ${outcomes}. Have I got that right?` },
     { tag: 'Yes', tagClass: 'tag-yes', label: 'They say yes', type: 'script',
       text: `Look, it sounds like this could be a worthwhile conversation. What I'd love to do is find 15 minutes in your calendar — when I'm not calling you on a random [DAY OF WEEK]. I'd bring in ${d.aename || '[AE NAME]'} who specialises in ${d.industry} here at Ping, and in that call we can show you what we're doing for other ${d.industry} companies and find out a bit more about your priorities — just to see if it makes sense to take it further. How does that sound?` },
     { tag: 'No', tagClass: 'tag-no', label: 'They say no', type: 'script',
