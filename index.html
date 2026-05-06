@@ -645,13 +645,13 @@ function buildWarmBranches(d) {
 
   return [
     { tag: 'Opener', tagClass: 'tag-opener', label: 'Opening line', type: 'script',
-      text: `Hi ${d.name}, thanks for taking my call — it's Rebecca here from Ping Identity. ${origin.charAt(0).toUpperCase() + origin.slice(1)} and I wanted to check in because we're seeing some great results for companies in ${d.industry} with things like ${outcomes}. Have I got that right?` },
+      text: `Hi ${d.name}, thanks for taking my call — it's Rebecca here from Ping Identity. ${origin.charAt(0).toUpperCase() + origin.slice(1)} and I wanted to check in because I was looking into what you're doing and was thinking ${outcomes} would be on your radar. Have I got that right?` },
     { tag: 'Yes', tagClass: 'tag-yes', label: 'They say yes', type: 'script',
       text: `Look, it sounds like this could be a worthwhile conversation. What I'd love to do is find 15 minutes in your calendar — when I'm not calling you on a random [DAY OF WEEK]. I'd bring in ${d.aename || '[AE NAME]'} who specialises in ${d.industry} here at Ping, and in that call we can show you what we're doing for other ${d.industry} companies and find out a bit more about your priorities — just to see if it makes sense to take it further. How does that sound?` },
     { tag: 'No', tagClass: 'tag-no', label: 'They say no', type: 'script',
       text: `No problem — what is front of mind for you at the moment?` },
     { tag: 'Voicemail', tagClass: 'tag-vm', label: 'Voicemail', type: 'script',
-      text: `Hi ${d.name}, the reason I'm calling is because ${origin} and I wanted to check in because ${vmOutcomes} seemed relevant for you. Ping is working with a number of companies in ${d.industry} — the likes of ${nameDrop} — and I want to show you what we're doing to help them and find out more about your objectives. This is Rebecca from Ping Identity, you can reach me on 07850 392 669.` }
+      text: `Hi ${d.name}, the reason I'm calling is because ${origin} and I was looking into what you're doing and was thinking ${vmOutcomes} would be on your radar. Ping is working with a number of companies in ${d.industry} — the likes of ${nameDrop} — and I want to show you what we're doing to help them and find out more about your objectives. This is Rebecca from Ping Identity, you can reach me on 07850 392 669.` }
   ];
 }
 
