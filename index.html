@@ -206,16 +206,21 @@
 
   <div class="loaded-banner" id="loadedBanner">Script loaded — ready to dial.</div>
 
-  <div class="mode-toggle" style="grid-template-columns: 1fr 1fr 1fr;">
+  <div class="mode-toggle" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
     <button class="mode-btn active" id="btnCold" onclick="setMode('cold')">
       <span class="mode-dot"></span>
       <span class="mode-btn-label">Cold call</span>
       <span class="mode-btn-desc">No prior contact</span>
     </button>
-    <button class="mode-btn" id="btnWarm" onclick="setMode('warm')">
+    <button class="mode-btn" id="btnWarmLead" onclick="setMode('warmlead')">
       <span class="mode-dot"></span>
       <span class="mode-btn-label">Warm lead</span>
-      <span class="mode-btn-desc">They've engaged with Ping</span>
+      <span class="mode-btn-desc">Event, content, reply</span>
+    </button>
+    <button class="mode-btn" id="btnWarm" onclick="setMode('warm')">
+      <span class="mode-dot"></span>
+      <span class="mode-btn-label">Lapsed customer</span>
+      <span class="mode-btn-desc">Previously used Ping</span>
     </button>
     <button class="mode-btn" id="btnExisting" onclick="setMode('existing')">
       <span class="mode-dot"></span>
@@ -238,6 +243,7 @@
       <label for="industry">Industry</label>
       <input type="text" id="industry" placeholder="e.g. retail, fintech, healthcare" />
     </div>
+    <div id="nameDropsRow">
     <div class="two-col">
       <div class="field">
         <label for="nd1">Name drop 1</label>
@@ -248,6 +254,7 @@
         <input type="text" id="nd2" placeholder="e.g. Victoria's Secret" />
       </div>
     </div>
+    </div>
     <div class="field">
       <label for="aename">AE name</label>
       <input type="text" id="aename" placeholder="e.g. John Smith" />
@@ -255,9 +262,19 @@
   </div>
 
   <div class="card" id="warmOriginCard" style="display:none;">
-    <div class="card-title">How you know them</div>
+    <div class="card-title">Lapsed customer context</div>
     <div class="inline-preview visible">
       <span style="color:var(--text-muted);">...thanks for taking my call — it's Rebecca here from Ping Identity. </span><input class="inline-input" type="text" id="warmOrigin" placeholder="you came to our event last week" /><span style="color:var(--text-muted);"> and I wanted to check in because...</span>
+    </div>
+  </div>
+
+  <div class="card" id="warmLeadCard" style="display:none;">
+    <div class="card-title">Warm lead context</div>
+    <div class="inline-preview visible" style="margin-bottom:12px;">
+      <span style="color:var(--text-muted);">...thanks for taking my call — it's Rebecca from Ping Identity. </span><input class="inline-input" type="text" id="warmLeadOrigin" placeholder="you came to our event last week" /><span style="color:var(--text-muted);"></span>
+    </div>
+    <div class="inline-preview visible">
+      <span style="color:var(--text-muted);">I'm assuming </span><input class="inline-input" type="text" id="warmLeadAssume" placeholder="AI agent security is something you're looking at" /><span style="color:var(--text-muted);"> is something you're looking at in 2026...</span>
     </div>
   </div>
 
@@ -283,8 +300,7 @@
     <textarea class="prep-textarea" id="prepNotes" placeholder="e.g. Coca-Cola CFO has publicly committed to making Costa perform better — digital efficiency is now the top priority, making this the right window to call..."></textarea>
   </div>
 
-  <div class="card">
-    <div class="card-title">Sales play</div>
+  <div class="card" id="salesPlayCard">
     <div class="field">
       <label for="spSelect">Select play</label>
       <select id="spSelect" onchange="onPlayChange()">
@@ -380,10 +396,14 @@ function safeDecode(str) {
 function setMode(mode) {
   currentMode = mode;
   document.getElementById('btnCold').classList.toggle('active', mode === 'cold');
+  document.getElementById('btnWarmLead').classList.toggle('active', mode === 'warmlead');
   document.getElementById('btnWarm').classList.toggle('active', mode === 'warm');
   document.getElementById('btnExisting').classList.toggle('active', mode === 'existing');
   document.getElementById('warmOriginCard').style.display = mode === 'warm' ? 'block' : 'none';
+  document.getElementById('warmLeadCard').style.display = mode === 'warmlead' ? 'block' : 'none';
   document.getElementById('existingCard').style.display = mode === 'existing' ? 'block' : 'none';
+  document.getElementById('nameDropsRow').style.display = mode === 'warmlead' ? 'none' : 'block';
+  document.getElementById('salesPlayCard').style.display = mode === 'warmlead' ? 'none' : 'block';
   document.getElementById('output').innerHTML = '';
 }
 
@@ -432,6 +452,8 @@ function getFormData() {
     o1:         document.getElementById('o1').value.trim(),
     o2:         document.getElementById('o2').value.trim(),
     warmOrigin:       document.getElementById('warmOrigin').value.trim(),
+    warmLeadOrigin:   document.getElementById('warmLeadOrigin').value.trim(),
+    warmLeadAssume:   document.getElementById('warmLeadAssume').value.trim(),
     existingContact:  document.getElementById('existingContact').value.trim(),
     existingProject:  document.getElementById('existingProject').value.trim(),
     existingDept:     document.getElementById('existingDept').value.trim(),
@@ -454,12 +476,24 @@ function setFormData(d) {
   document.getElementById('o2').value         = d.o2 || '';
   document.getElementById('spSelect').value   = d.sp || '';
   document.getElementById('warmOrigin').value      = d.warmOrigin || '';
+  document.getElementById('warmLeadOrigin').value  = d.warmLeadOrigin || '';
+  document.getElementById('warmLeadAssume').value  = d.warmLeadAssume || '';
   document.getElementById('existingContact').value = d.existingContact || '';
   document.getElementById('existingProject').value = d.existingProject || '';
   document.getElementById('existingDept').value    = d.existingDept || '';
   document.getElementById('prepNotes').value   = d.prepNotes || '';
   document.getElementById('extraDiscoQ').value = d.extraDiscoQ || '';
   onPlayChange();
+}
+
+function getRegulator(industry) {
+  const ind = (industry || '').toLowerCase();
+  if (/financ|bank|fsi|fintech|insur|investment|asset|wealth|payment|lending/.test(ind)) return 'FCA';
+  if (/health|nhs|pharma|medic|clinical/.test(ind)) return 'CQC';
+  if (/legal|law|solicitor/.test(ind)) return 'SRA';
+  if (/energy|utility|utilities|power|gas|water/.test(ind)) return 'Ofgem';
+  if (/telecom|telco|media|broadcast/.test(ind)) return 'Ofcom';
+  return 'regulators';
 }
 
 function buildColdBranches(d) {
@@ -479,15 +513,26 @@ function buildColdBranches(d) {
     d.extraDiscoQ.split('\n').forEach(function(q) { q = q.trim(); if (q) discoQs.push(q); });
   }
 
+  const isSP8 = d.sp === 'sp8';
+  const regulator = getRegulator(d.industry);
+  const regulatorText = regulator === 'regulators' ? 'if regulators come knocking' : 'if the ' + regulator + ' comes knocking';
+  const sp8Pitch = "The reason I'm reaching out to you specifically is to see how you're managing identity for AI — making sure your AI agents can only access what they're supposed to, everything they do is traceable, and you can produce an audit trail " + regulatorText + ". Is this something you're on top of or is it on your horizon for 2026?";
+
   return [
     { tag: 'Opener', tagClass: 'tag-opener', label: 'Opening line', type: 'script',
-      text: 'Hi ' + d.name + ', really glad I caught you. It\'s Rebecca here from Ping Identity — have you heard the name before?' },
+      text: 'Hi ' + d.name + ', it\'s Rebecca from Ping Identity — have you heard of us?' },
     { tag: 'Yes', tagClass: 'tag-yes', label: 'They say yes', type: 'script',
-      text: 'Perfect — saves me the intro.\n\nThe reason for my call is we work with companies in ' + d.industry + ' like ' + nameDrop + ' to ' + play + '. We\'re helping companies with things like ' + outcomes + '.\n\nIs that on your radar for 2026?' },
+      text: isSP8
+        ? 'Perfect — saves me the intro.\n\n' + sp8Pitch
+        : 'Perfect — saves me the intro.\n\nThe reason for my call is we work with companies in ' + d.industry + ' like ' + nameDrop + ' to ' + play + '. We\'re helping companies with things like ' + outcomes + '.\n\nIs that on your radar for 2026?' },
     { tag: 'Heard a bit / unsure', tagClass: 'tag-maybe', label: "They've heard of you", type: 'script',
-      text: 'So you know a bit about us — great.\n\nThe reason for my call is we work with companies in ' + d.industry + ' like ' + nameDrop + ' to ' + play + '. We\'re helping companies with things like ' + outcomes + '.\n\nIs that on your radar for 2026?' },
+      text: isSP8
+        ? 'Ah great — that saves me the intro.\n\n' + sp8Pitch
+        : 'So you know a bit about us — great.\n\nThe reason for my call is we work with companies in ' + d.industry + ' like ' + nameDrop + ' to ' + play + '. We\'re helping companies with things like ' + outcomes + '.\n\nIs that on your radar for 2026?' },
     { tag: 'No', tagClass: 'tag-no', label: 'They say no', type: 'script',
-      text: "That's exactly why I'm calling — to make the intro.\n\nWe work with companies in " + d.industry + ' like ' + nameDrop + ' to ' + play + '. We\'re helping companies with things like ' + outcomes + '.\n\nIs that on your radar for 2026?' },
+      text: isSP8
+        ? "Ah that's exactly why I'm calling.\n\n" + sp8Pitch
+        : "That's exactly why I'm calling — to make the intro.\n\nWe work with companies in " + d.industry + ' like ' + nameDrop + ' to ' + play + '. We\'re helping companies with things like ' + outcomes + '.\n\nIs that on your radar for 2026?' },
     { tag: 'Discovery', tagClass: 'tag-disco', label: 'Discovery questions', type: 'disco', questions: discoQs },
     { tag: 'Close', tagClass: 'tag-close', label: 'The close', type: 'script',
       text: "Look, it sounds like this could be a worthwhile conversation. What I'd love to do is find 15 minutes in your calendar — when I'm not calling you out of the blue. I'd bring in " + (d.aename || '[AE NAME]') + ' who specialises in ' + d.industry + " here at Ping, and in that call we can show you what we're doing for other " + d.industry + " companies and find out a bit more about your priorities — just to see if it makes sense to take it further. How does that sound?" },
@@ -506,13 +551,30 @@ function buildExistingBranches(d) {
 
   return [
     { tag: 'Opener', tagClass: 'tag-opener', label: 'Opening line', type: 'script',
-      text: 'Hi ' + d.name + ", really glad I caught you — it's Rebecca from Ping Identity. The reason for my call is we've been working with " + contact + ' on ' + project + ' and it got me thinking about the ' + dept + ' team at ' + (d.company || d.industry) + ' and that ' + outcomes + " could be on your radar this year. Have I got that right?" },
+      text: 'Hi ' + d.name + ", it's Rebecca from Ping Identity. The reason for my call is we've been working with " + contact + ' on ' + project + ' and it got me thinking about the ' + dept + ' team at ' + (d.company || d.industry) + ' and that ' + outcomes + " could be on your radar this year. Have I got that right?" },
     { tag: 'Yes', tagClass: 'tag-yes', label: 'They say yes', type: 'script',
       text: "Look, it sounds like this could be a worthwhile conversation. What I'd love to do is find 15 minutes in your calendar — when I'm not calling you on a random [DAY OF WEEK]. I'd bring in " + (d.aename || '[AE NAME]') + ' who specialises in ' + d.industry + " here at Ping, and in that call we can show you what we're doing and find out a bit more about your priorities — just to see if it makes sense to take it further. How does that sound?" },
     { tag: 'No', tagClass: 'tag-no', label: 'They say no', type: 'script',
       text: 'No problem — what is front of mind for you at the moment?' },
     { tag: 'Voicemail', tagClass: 'tag-vm', label: 'Voicemail', type: 'script',
       text: 'Hi ' + d.name + ", the reason I'm calling is we've been working with " + contact + ' on ' + project + ' and it got me thinking about your ' + dept + ' and whether ' + vmOutcomes + " is on your radar this year. I'd love to find 15 minutes to show you what we're doing — this is Rebecca from Ping Identity, you can reach me on 07850 392 669." }
+  ];
+}
+
+function buildWarmLeadBranches(d) {
+  const origin = d.warmLeadOrigin || '[how you know them]';
+  const assume = d.warmLeadAssume || '[what you are assuming]';
+  const originCap = origin.charAt(0).toUpperCase() + origin.slice(1);
+
+  return [
+    { tag: 'Opener', tagClass: 'tag-opener', label: 'Opening line', type: 'script',
+      text: "Hi " + d.name + ", thanks for taking my call — it's Rebecca from Ping Identity. " + originCap + ".\n\n[PAUSE FOR RESPONSE]\n\nI'm assuming " + assume + " is something you're looking at in 2026 and I wanted to find 15 minutes in your diary when I'm not calling you out of the blue, to see if there's something worth exploring and show you what others in " + d.industry + " are doing. I'd loop in " + (d.aename || '[AE NAME]') + " who specialises in " + d.industry + " here at Ping." },
+    { tag: 'Yes', tagClass: 'tag-yes', label: 'They say yes', type: 'script',
+      text: "Look, it sounds like this could be a worthwhile conversation. What I'd love to do is find 15 minutes in your calendar — when I'm not calling you on a random [DAY OF WEEK]. I'd bring in " + (d.aename || '[AE NAME]') + " who specialises in " + d.industry + " here at Ping, and in that call we can show you what we're doing for other " + d.industry + " companies and find out a bit more about your priorities — just to see if it makes sense to take it further. How does that sound?" },
+    { tag: 'No', tagClass: 'tag-no', label: 'They say no', type: 'script',
+      text: "No problem — what is front of mind for you at the moment?" },
+    { tag: 'Voicemail', tagClass: 'tag-vm', label: 'Voicemail', type: 'script',
+      text: "Hi " + d.name + ", it's Rebecca from Ping Identity. " + originCap + ". The reason for my call is I'm assuming " + assume + " is something you're looking at in 2026 and I wanted to have a quick chat about that really. This is Rebecca from Ping Identity, you can reach me on 07850 392 669." }
   ];
 }
 
@@ -540,7 +602,7 @@ function renderOutput(branches, d, saved) {
     return b.type === 'script' ? b.text : b.questions.map(function(q, i) { return (i+1) + '. ' + q; }).join('\n');
   });
 
-  const modeLabel = d.mode === 'warm' ? 'Warm' : d.mode === 'existing' ? 'Open op / Active customer' : 'Cold';
+  const modeLabel = d.mode === 'warmlead' ? 'Warm lead' : d.mode === 'warm' ? 'Lapsed customer' : d.mode === 'existing' ? 'Open op / Active customer' : 'Cold';
   const spTitle = d.sp === 'custom' ? 'Custom play' : (PLAYS[d.sp] ? PLAYS[d.sp].title : '');
   const saveBtn = saved
     ? '<button class="save-btn" style="background:var(--surface-2);color:var(--text-muted);border:0.5px solid var(--border-mid);" disabled>Saved \u2713</button>'
@@ -572,11 +634,19 @@ function renderOutput(branches, d, saved) {
 
 function generateScript() {
   const d = getFormData();
-  if (!d.name || !d.industry || !d.nd1 || !d.sp) {
-    document.getElementById('output').innerHTML = '<div class="error-msg">Please fill in prospect name, industry, at least one name drop, and select a sales play.</div>';
+  if (!d.name || !d.industry) {
+    document.getElementById('output').innerHTML = '<div class="error-msg">Please fill in prospect name and industry.</div>';
     return;
   }
-  if (!d.o1 && !d.o2) {
+  if (d.mode !== 'warmlead' && !d.nd1) {
+    document.getElementById('output').innerHTML = '<div class="error-msg">Please add at least one name drop.</div>';
+    return;
+  }
+  if (d.mode !== 'warmlead' && !d.sp) {
+    document.getElementById('output').innerHTML = '<div class="error-msg">Please select a sales play.</div>';
+    return;
+  }
+  if (d.mode !== 'warmlead' && !d.o1 && !d.o2) {
     document.getElementById('output').innerHTML = '<div class="error-msg">Please add at least one business outcome relevant to this prospect.</div>';
     return;
   }
@@ -588,12 +658,16 @@ function generateScript() {
     document.getElementById('output').innerHTML = '<div class="error-msg">Please fill in the existing project and their department.</div>';
     return;
   }
+  if (d.mode === 'warmlead' && (!d.warmLeadOrigin || !d.warmLeadAssume)) {
+    document.getElementById('output').innerHTML = '<div class="error-msg">Please fill in how you know them and what you\'re assuming.</div>';
+    return;
+  }
   if (d.mode === 'warm' && !d.warmOrigin) {
     document.getElementById('output').innerHTML = '<div class="error-msg">Please fill in how you know this prospect.</div>';
     return;
   }
   window._currentData = d;
-  const branches = d.mode === 'warm' ? buildWarmBranches(d) : d.mode === 'existing' ? buildExistingBranches(d) : buildColdBranches(d);
+  const branches = d.mode === 'warmlead' ? buildWarmLeadBranches(d) : d.mode === 'warm' ? buildWarmBranches(d) : d.mode === 'existing' ? buildExistingBranches(d) : buildColdBranches(d);
   renderOutput(branches, d, false);
 }
 
@@ -609,7 +683,7 @@ function saveScript() {
     .then(function() { showToast('Saved! Link copied to clipboard'); })
     .catch(function() { showToast('Saved! Open saved scripts to get the link'); });
   updateCount();
-  const branches = d.mode === 'warm' ? buildWarmBranches(d) : d.mode === 'existing' ? buildExistingBranches(d) : buildColdBranches(d);
+  const branches = d.mode === 'warmlead' ? buildWarmLeadBranches(d) : d.mode === 'warm' ? buildWarmBranches(d) : d.mode === 'existing' ? buildExistingBranches(d) : buildColdBranches(d);
   renderOutput(branches, d, true);
 }
 
@@ -644,7 +718,7 @@ function renderSavedList() {
     const s = saved[id];
     const sp = PLAYS[s.sp];
     const spLabel = s.sp === 'custom' ? 'Custom' : (sp ? sp.title.split('—')[0].trim() : '');
-    const modeLabel = s.mode === 'warm' ? 'Warm' : s.mode === 'existing' ? 'Open op' : 'Cold';
+    const modeLabel = s.mode === 'warmlead' ? 'Warm lead' : s.mode === 'warm' ? 'Lapsed' : s.mode === 'existing' ? 'Open op' : 'Cold';
     const encoded = safeEncode(s);
     return '<div class="saved-item"><div class="saved-item-name">' + s.name + (s.company ? ' · ' + s.company : '') + '</div><div class="saved-item-meta">' + s.industry + ' \u00B7 ' + modeLabel + ' \u00B7 ' + spLabel + ' \u00B7 Saved ' + s.savedAt + '</div><div class="saved-item-actions"><button class="load-btn" onclick="loadScript(\'' + id + '\')">Load</button><button class="copy-link-btn" onclick="copyLink(\'' + encoded + '\', this)">Copy link</button><button class="delete-btn" onclick="deleteScript(\'' + id + '\')">Delete</button></div></div>';
   }).join('');
@@ -656,7 +730,7 @@ function loadScript(id) {
   if (!d) return;
   setFormData(d);
   window._currentData = d;
-  const branches = d.mode === 'warm' ? buildWarmBranches(d) : d.mode === 'existing' ? buildExistingBranches(d) : buildColdBranches(d);
+  const branches = d.mode === 'warmlead' ? buildWarmLeadBranches(d) : d.mode === 'warm' ? buildWarmBranches(d) : d.mode === 'existing' ? buildExistingBranches(d) : buildColdBranches(d);
   renderOutput(branches, d, true);
   closePanel();
   document.getElementById('loadedBanner').classList.add('visible');
@@ -719,7 +793,7 @@ function copyText(i, btn) {
       const d = safeDecode(p);
       setFormData(d);
       window._currentData = d;
-      const branches = d.mode === 'warm' ? buildWarmBranches(d) : d.mode === 'existing' ? buildExistingBranches(d) : buildColdBranches(d);
+      const branches = d.mode === 'warmlead' ? buildWarmLeadBranches(d) : d.mode === 'warm' ? buildWarmBranches(d) : d.mode === 'existing' ? buildExistingBranches(d) : buildColdBranches(d);
       renderOutput(branches, d, true);
       document.getElementById('loadedBanner').classList.add('visible');
       setTimeout(function() { document.getElementById('loadedBanner').classList.remove('visible'); }, 4000);
